@@ -9,13 +9,23 @@ import uuid
 
 
 class Coin(models.Model):
+    """A coin type like dolar, peso or bitcoin."""
+
     name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class Account(models.Model):
+    """Main user account. Holds user information related to coins."""
+
     user = models.OneToOneField(User, on_delete=models.PROTECT)
     pubkey = models.CharField(max_length=100, blank=True)  # REVISAR
     privkey = models.CharField(max_length=100, blank=True)  # REVISAR
+
+    def __str__(self):
+        return '%s %s' % (self.user.name, "account")
 
 
 @receiver(post_save, sender=User)
@@ -32,22 +42,11 @@ def save_user_account(sender, instance, **kwargs):
 
 
 class CoinAccount(models.Model):
+    """Holds the balance in a given coin for a account."""
+
     balance = models.IntegerField(default=0)
     main_account = models.ForeignKey(Account, on_delete=models.CASCADE)
     coin_type = models.ForeignKey(Coin, on_delete=models.PROTECT)
 
-
-class Transaction(models.Model):
-    date = models.DateTimeField()
-    origin = models.ForeignKey(
-        Account,
-        related_name='origin',
-        on_delete=models.CASCADE
-    )
-    destiny = models.ForeignKey(
-        Account,
-        related_name='destiny',
-        on_delete=models.CASCADE
-    )
-    value = models.IntegerField()
-    coin_type = models.ForeignKey(Coin, on_delete=models.PROTECT)
+    def __str__(self):
+        return '%s %s' % (self.coin_type, self.main_account)
