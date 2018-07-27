@@ -1,0 +1,10 @@
+.DS_Store
+*.py[co]
+__pycache__
+bin/
+include/
+lib/
+**/migrations/*.py
+*.sqlite3
+**/settings_env.py
+
