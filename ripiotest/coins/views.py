@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 
 # from django.shortcuts import render
 from django.contrib.auth.models import User
-from coins.models import Coin, Account
-from coins.serializers import UserSerializer
-from coins.serializers import CoinSerializer
-from coins.permissions import IsAdminOrOwnerReadOnly
+from coins.models import Coin, Account, CoinAccount
+from coins.serializers import UserSerializer, CoinSerializer
+from coins.serializers import AccountSerializer, CoinAccountSerializer
+from coins.permissions import IsAdminOrOwnerReadOnlyPermission
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -45,5 +45,13 @@ class AccountViewSet(viewsets.ModelViewSet):
     """Clients account list and details."""
 
     queryset = Account.objects.all()
-    serializer_class = CoinSerializer
-    permission_classes = (permissions.IsAdminOrOwnerReadOnly)
+    serializer_class = AccountSerializer
+    permission_classes = (IsAdminOrOwnerReadOnlyPermission,)
+
+
+class CoinAccountViewSet(viewsets.ModelViewSet):
+    """SubAccouns lists and details."""
+
+    queryset = CoinAccount.objects.all()
+    serializer_class = CoinAccountSerializer
+    #permission_classes

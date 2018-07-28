@@ -14,12 +14,12 @@ class Transaction(models.Model):
         related_name='origin',
         on_delete=models.CASCADE
     )
-    destiny = models.ForeignKey(
+    destination = models.ForeignKey(
         Account,
         related_name='destiny',
         on_delete=models.CASCADE
     )
-    value = models.IntegerField()
+    ammount = models.IntegerField()
     coin_type = models.ForeignKey(Coin, on_delete=models.PROTECT)
 
     def __str__(self):
