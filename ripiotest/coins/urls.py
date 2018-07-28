@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'coins', views.CoinViewSet)
 router.register(r'users', views.UserViewSet)
+router.register(r'accounts', views.AccountViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
