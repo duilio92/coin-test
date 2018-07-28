@@ -4,6 +4,7 @@ from transactions.models import Transaction
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
+    name = serializers.SerializerMethodField()
 
     def get_name(self, obj):
         return obj.origin + " to " + obj.destination
@@ -16,7 +17,7 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
             'date',
             'origin',
             'destination',
-            'coin-type',
+            'coin_type',
             'ammount'
         )# ,'transactions')
         extra_kwargs = {

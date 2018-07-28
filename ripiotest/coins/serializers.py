@@ -33,21 +33,26 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Account
-        fields = ('url', 'name', 'user', 'priv_key', 'pub_key')# 'coin_sub_acounts')
+        fields = ('url', 'name', 'user', 'pub_key')# 'coin_sub_acounts')
         extra_kwargs = {'url': {'view_name': 'coins:account-detail'}}
 
 
 class CoinAccountSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
+    coin_type = serializers.HyperlinkedRelatedField(
         many=False,
-        view_name='coins:user-detail',
+        view_name='coins:coin-detail',
+        read_only=True)
+
+    main_account = serializers.HyperlinkedRelatedField(
+        many=False,
+        view_name='coins:account-detail',
         read_only=True)
     name = serializers.SerializerMethodField()
 
     def get_name(self, obj):
-        return obj.user.username + " " + obj.coin.name
+        return obj.main_account.user.username + " " + obj.coin_type.name
 
     class Meta:
         model = CoinAccount
-        fields = ('url', 'name', 'user', 'balance')# ,'transactions')
-        extra_kwargs = {'url': {'view_name': 'coins:coin-account-detail'}}
+        fields = ('url', 'name', 'balance', 'coin_type', 'main_account')# ,'transactions')
+        extra_kwargs = {'url': {'view_name': 'coins:coinaccount-detail'}}

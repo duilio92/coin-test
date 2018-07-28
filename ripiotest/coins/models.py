@@ -28,7 +28,7 @@ class Account(models.Model):
     priv_key = models.CharField(max_length=100, blank=True)  # REVISAR
 
     def __str__(self):
-        return '%s %s' % (self.user.name, "account")
+        return '%s %s' % (self.user.username, "account")
 
 
 @receiver(post_save, sender=User)
