@@ -21,8 +21,8 @@ from rest_framework import viewsets
 @permission_classes((permissions.AllowAny,))
 def api_root(request, format=None):
     return Response({
-        'users': reverse('coins:user-list', request=request, format=format),
-        'coins': reverse('coins:coin-list', request=request, format=format)
+        'users': reverse('api:user-list', request=request, format=format),
+        'coins': reverse('api:coin-list', request=request, format=format)
     })
 
 
