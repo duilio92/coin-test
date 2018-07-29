@@ -7,4 +7,4 @@ lib/
 **/migrations/*.py
 *.sqlite3
 **/settings_env.py
-seccrets.py
+secrets.py
