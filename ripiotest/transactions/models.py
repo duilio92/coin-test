@@ -11,16 +11,26 @@ class Transaction(models.Model):
     date = models.DateTimeField(default=timezone.now, editable=False)
     origin = models.ForeignKey(
         CoinAccount,
-        related_name='origin',
+        related_name='origin_transactions',
         on_delete=models.CASCADE
     )
     destination = models.ForeignKey(
         CoinAccount,
-        related_name='destiny',
+        related_name='destination_transactions',
         on_delete=models.CASCADE
     )
     ammount = models.IntegerField()
     coin_type = models.ForeignKey(Coin, on_delete=models.PROTECT)
 
     def __str__(self):
-        return '%s %s %s' % (self.date, self.origin, self.destiny)
+        return '%s %s %s' % (self.date, self.origin, self.destination)
+
+    def save(self, *args, **kwargs):
+        if self.origin.balance - self.ammount < 0:
+            return  # an account cant debit to a negative balance
+        # next 4 lines should be atomic
+        self.origin.balance = self.origin.balance - self.ammount
+        self.destination.balance = self.destination.balance + self.ammount
+        self.origin.save()
+        self.destination.save()
+        super(Transaction, self).save(*args, **kwargs)

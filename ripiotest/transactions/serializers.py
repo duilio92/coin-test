@@ -27,7 +27,6 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     date = serializers.DateTimeField(read_only=True)
 
     def validate(self, data):
-        # import pdb; pdb.set_trace()  # breakpoint 98ee55aa //
         if not data['origin']:
             raise ValidationError('La transaccion debe tener una cuenta origen')
         if not data['destination']:
@@ -49,7 +48,7 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError('La transaccion debe tener un monto mayor a 0.')
         if origin.balance - ammount <0:
             raise ValidationError('El origen no tiene fondos suficientes para la transaccion.')
-
+        return data
 
     class Meta:
         model = Transaction

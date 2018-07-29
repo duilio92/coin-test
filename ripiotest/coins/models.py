@@ -24,8 +24,8 @@ class Account(models.Model):
         User,
         related_name='account',
         on_delete=models.PROTECT)
-    pub_key = models.CharField(max_length=100, blank=True)  # REVISAR
-    priv_key = models.CharField(max_length=100, blank=True)  # REVISAR
+    # pub_key = models.CharField(max_length=100, blank=True)  # REVISAR
+    # priv_key = models.CharField(max_length=100, blank=True)  # REVISAR
 
     def __str__(self):
         return '%s %s' % (self.user.username, "account")
