@@ -27,5 +27,5 @@ class IsOwnerCreateOrReadOnly(BasePermission):
             return True
         else:
             if request.method == 'CREATE':
-                return request.user == "Moco"
+                return request.user == obj.owner
             return True

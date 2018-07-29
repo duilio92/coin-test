@@ -31,6 +31,10 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_name(self, obj):
         return obj.user.username + " account"
+
+    def get_user(self, obj):
+        return obj.user
+
     read_only_fields = ('pub_key')
 
     class Meta:
@@ -40,6 +44,7 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CoinAccountSerializer(serializers.HyperlinkedModelSerializer):
+    #user = serializers.HiddenField(get)
     coin_type = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='api:coin-detail',
@@ -51,6 +56,9 @@ class CoinAccountSerializer(serializers.HyperlinkedModelSerializer):
         queryset=Account.objects.all())
     name = serializers.SerializerMethodField()
     balance = serializers.IntegerField(default=0, read_only=True)
+
+    def get_user(self, obj):
+        return obj.main_account.user
 
     def get_name(self, obj):
         return obj.main_account.user.username + " " + obj.coin_type.name
