@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 from coins.models import Coin, Account, CoinAccount
 from coins.serializers import UserSerializer, CoinSerializer
 from coins.serializers import AccountSerializer, CoinAccountSerializer
-from coins.permissions import IsAdminOrOwnerReadOnlyPermission
+from coins.permissions import IsAdminOrUserReadOnlyPermission,IsAdminOrOwnerReadOnlyPermission
+# from coins.permissions import IsOwnerCreateOrReadOnly,IsAdminOrOwnerReadOnlyPermission
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -22,10 +23,11 @@ from rest_framework import viewsets
 def api_root(request, format=None):
     return Response({
         'users': reverse('api:user-list', request=request, format=format),
-        'coins': reverse('api:coin-list', request=request, format=format)
+        'coins': reverse('coins:coin-list', request=request, format=format)
     })
 
 
+@permission_classes((IsAdminOrOwnerReadOnlyPermission))
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """User list and detail."""
 
@@ -33,7 +35,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-@permission_classes((permissions.DjangoModelPermissionsOrAnonReadOnly,))
+#@permission_classes((IsAdminOrUserReadOnlyPermission))
 class CoinViewSet(viewsets.ModelViewSet):
     """Coins list and detail. Admins can create coins."""
 
@@ -41,17 +43,17 @@ class CoinViewSet(viewsets.ModelViewSet):
     serializer_class = CoinSerializer
 
 
+#@permission_classes((IsAdminOrUserReadOnlyPermission))
 class AccountViewSet(viewsets.ModelViewSet):
     """Clients account list and details."""
 
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = (IsAdminOrOwnerReadOnlyPermission,)
 
 
+#@permission_classes((IsAdminOrOwnerReadOnlyPermission))
 class CoinAccountViewSet(viewsets.ModelViewSet):
     """SubAccouns lists and details."""
 
     queryset = CoinAccount.objects.all()
     serializer_class = CoinAccountSerializer
-    #permission_classes

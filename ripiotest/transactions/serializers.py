@@ -11,16 +11,16 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     origin = serializers.HyperlinkedRelatedField(
         many=False,
-        view_name='coins:coinaccount-detail',
+        view_name='api:coinaccount-detail',
         queryset=CoinAccount.objects.all())
 
     destination = serializers.HyperlinkedRelatedField(
         many=False,
-        view_name='coins:coinaccount-detail',
+        view_name='api:coinaccount-detail',
         queryset=CoinAccount.objects.all())
     coin_type = serializers.HyperlinkedRelatedField(
         many=False,
-        view_name='coins:coin-detail',
+        view_name='api:coin-detail',
         queryset=Coin.objects.all())
 
     date = serializers.DateTimeField(read_only=True)

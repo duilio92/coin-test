@@ -15,7 +15,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'id', 'username')
-        #extra_kwargs = {'url': {'view_name': 'api:user-detail'}}
+        extra_kwargs = {'url': {'view_name': 'api:user-detail'}}
 
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,6 +50,7 @@ class CoinAccountSerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:account-detail',
         queryset=Account.objects.all())
     name = serializers.SerializerMethodField()
+    balance = serializers.IntegerField(default=0, read_only=True)
 
     def get_name(self, obj):
         return obj.main_account.user.username + " " + obj.coin_type.name
