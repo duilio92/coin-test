@@ -7,7 +7,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework import permissions
 
 
-@permission_classes((OwnerCreateOrReadOnly,))
+#@permission_classes((OwnerCreateOrReadOnly,))
 class TransactionViewSet(viewsets.ModelViewSet):
     """SubAccouns lists and details."""
 

@@ -26,6 +26,10 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     date = serializers.DateTimeField(read_only=True)
 
+    def create(self, validated_data):
+        print "create was called"
+        return Transaction.objects.create(**validated_data)
+
     def validate(self, data):
         if not data['origin']:
             raise ValidationError('La transaccion debe tener una cuenta origen')

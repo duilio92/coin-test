@@ -26,6 +26,7 @@ class Transaction(models.Model):
         return '%s %s %s' % (self.date, self.origin, self.destination)
 
     def save(self, *args, **kwargs):
+        print "recibi llamada a save"
         if self.origin.balance - self.ammount < 0:
             return  # an account cant debit to a negative balance
         # next 4 lines should be atomic
