@@ -25,13 +25,13 @@ class Transaction(models.Model):
     def __str__(self):
         return '%s %s %s' % (self.date, self.origin, self.destination)
 
-    def save(self, *args, **kwargs):
-        print "recibi llamada a save"
-        if self.origin.balance - self.ammount < 0:
-            return  # an account cant debit to a negative balance
-        # next 4 lines should be atomic
-        self.origin.balance = self.origin.balance - self.ammount
-        self.destination.balance = self.destination.balance + self.ammount
-        self.origin.save()
-        self.destination.save()
-        super(Transaction, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     print "recibi llamada a save"
+    #     if self.origin.balance - self.ammount < 0:
+    #         return  # an account cant debit to a negative balance
+    #     # next 4 lines should be atomic
+    #     self.origin.balance = self.origin.balance - self.ammount
+    #     self.destination.balance = self.destination.balance + self.ammount
+    #     self.origin.save()
+    #     self.destination.save()
+    #     super(Transaction, self).save(*args, **kwargs)

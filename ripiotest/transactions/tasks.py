@@ -22,3 +22,7 @@ def create_transaction(ammount, origin, destination, coin_type):
     t.destination = CoinAccount.objects.get(pk=destination)
     t.save()
     return t.pk
+
+@celery.task
+def create_transaction_json(json):
+    return json
