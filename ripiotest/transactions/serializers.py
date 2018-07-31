@@ -1,9 +1,8 @@
+# -*- coding: utf-8 -*-
 from rest_framework import serializers
 from coins.models import CoinAccount, Coin
 from transactions.models import Transaction
 from rest_framework.exceptions import ValidationError
-from .tasks import create_transaction, create_transaction_json
-from rest_framework.renderers import JSONRenderer
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,22 +26,6 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
         queryset=Coin.objects.all())
 
     date = serializers.DateTimeField(read_only=True)
-
-    # def create(self, validated_data):
-    #     print "create was called"
-    #     print validated_data
-    #     print JSONRenderer().render(validated_data)
-    #     ammount = validated_data["ammount"]
-    #     origin = validated_data["origin"].pk
-    #     destination = validated_data["destination"].pk
-    #     coin_type = validated_data["coin_type"].pk
-    #     result = create_transaction.delay(
-    #         ammount,
-    #         origin,
-    #         destination,
-    #         coin_type)
-    #     transaction_pk = result.get(timeout=1)
-    #     return Transaction.objects.get(pk=transaction_pk)
 
     def validate(self, data):
         if not data['origin']:
@@ -71,13 +54,13 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Transaction
         fields = (
-        #    'url',
+            'url',
             'name',
             'date',
             'origin',
             'destination',
             'coin_type',
             'ammount'
-        )# ,'transactions')
-        #extra_kwargs = {
-        #    'url': {'view_name': 'api:transaction-detail'}}
+        )
+        extra_kwargs = {
+            'url': {'view_name': 'api:transaction-detail'}}

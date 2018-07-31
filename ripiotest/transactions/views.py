@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 from transactions.models import Transaction
 from transactions.serializers import TransactionSerializer
-# from transactions.permissions import OwnerCreateOrReadOnly
 from rest_framework import viewsets
-# from rest_framework.decorators import permission_classes
-# from rest_framework import permissions
 from django.db import transaction
-
+from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
-from coins.models import Coin, CoinAccount
 
 
-class CreateTransactionViewSet(viewsets.ViewSet):
+# TODO: add permission
+class CustomTransactionViewSet(viewsets.ViewSet):
     """
     List all transactions, or create a new transaction.
     """
@@ -42,3 +39,14 @@ class CreateTransactionViewSet(viewsets.ViewSet):
         t.origin.save()
         t.destination.save()
         serializer.save()
+
+    def retrieve(self, request, pk, format=None):
+        transaction = self.get_object(pk)
+        serializer = TransactionSerializer(transaction, context={'request': request})
+        return Response(serializer.data)
+
+    def get_object(self, pk):
+        try:
+            return Transaction.objects.get(pk=pk)
+        except Transaction.DoesNotExist:
+            raise Http404
