@@ -35,7 +35,13 @@ celery.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 #     return 4 + 5
 
 @celery.task #(base=QueueOnce)
-def create_transaction():
+def create_transaction(ammount, origin, destination, coin_type):
     from transactions.models import Transaction
-    sleep(30)
-    return "Done!"
+    from coins.models import Coin, CoinAccount
+    t = Transaction()
+    t.ammount = ammount
+    t.coin_type = Coin.objects.get(pk=coin_type)
+    t.origin = CoinAccount.objects.get(pk=origin)
+    t.destination = CoinAccount.objects.get(pk=destination)
+    t.save()
+    return t.pk

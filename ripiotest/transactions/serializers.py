@@ -2,6 +2,8 @@ from rest_framework import serializers
 from coins.models import CoinAccount, Coin
 from transactions.models import Transaction
 from rest_framework.exceptions import ValidationError
+from .tasks import create_transaction
+from rest_framework.renderers import JSONRenderer
 
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
@@ -28,7 +30,19 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         print "create was called"
-        return Transaction.objects.create(**validated_data)
+        print validated_data
+        ammount = validated_data["ammount"]
+        origin = validated_data["origin"].pk
+        destination = validated_data["destination"].pk
+        coin_type = validated_data["coin_type"].pk
+        print create_transaction.delay(
+            ammount,
+            origin,
+            destination,
+            coin_type)
+        import pdb; pdb.set_trace()  # breakpoint 39e37cdb //
+
+        #return Transaction.objects.create(**validated_data)
 
     def validate(self, data):
         if not data['origin']:
