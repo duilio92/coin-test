@@ -41,6 +41,7 @@ class CoinViewSet(viewsets.ModelViewSet):
     """Coins list and detail. Admins can create coins."""
 
     queryset = Coin.objects.all()
+    lookup_field = 'name'
     serializer_class = CoinSerializer
 
 

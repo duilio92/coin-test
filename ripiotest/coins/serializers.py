@@ -10,7 +10,10 @@ class CoinSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Coin
         fields = ('url', 'id', 'name')
-        extra_kwargs = {'url': {'view_name': 'api:coin-detail'}}
+        lookup_field = 'name'
+        extra_kwargs = {
+            'url': {'view_name': 'api:coin-detail', 'lookup_field': 'name'}
+        }
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
