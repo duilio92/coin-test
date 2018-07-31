@@ -35,14 +35,13 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
         origin = validated_data["origin"].pk
         destination = validated_data["destination"].pk
         coin_type = validated_data["coin_type"].pk
-        print create_transaction.delay(
+        result = create_transaction.delay(
             ammount,
             origin,
             destination,
             coin_type)
-        import pdb; pdb.set_trace()  # breakpoint 39e37cdb //
-
-        #return Transaction.objects.create(**validated_data)
+        transaction_pk = result.get(timeout=1)
+        return Transaction.objects.get(pk=transaction_pk)
 
     def validate(self, data):
         if not data['origin']:
