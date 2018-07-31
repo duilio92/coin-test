@@ -52,6 +52,7 @@ class CoinAccountSerializer(serializers.HyperlinkedModelSerializer):
     coin_type = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='api:coin-detail',
+        lookup_field='name',
         queryset=Coin.objects.all()
     )
 

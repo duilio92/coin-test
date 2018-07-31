@@ -7,7 +7,7 @@ from .models import Coin, Account, CoinAccount
 from .serializers import UserSerializer, CoinSerializer
 from .serializers import AccountSerializer, CoinAccountSerializer
 from .permissions import IsAdminOrUserReadOnlyPermission
-from .permissions import IsAdminOrOwnerReadOnlyPermission
+from .permissions import IsReadOnlyPermission,IsOriginCreateOrReadOnly
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -45,7 +45,7 @@ class CoinViewSet(viewsets.ModelViewSet):
     serializer_class = CoinSerializer
 
 
-@permission_classes((IsAdminOrOwnerReadOnlyPermission,))
+@permission_classes((IsReadOnlyPermission,))
 class AccountViewSet(viewsets.ModelViewSet):
     """Clients account list and details."""
 
@@ -53,7 +53,7 @@ class AccountViewSet(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
 
 
-@permission_classes((IsAdminOrOwnerReadOnlyPermission,))
+@permission_classes((IsOriginCreateOrReadOnly,))
 class CoinAccountViewSet(viewsets.ModelViewSet):
     """SubAccouns lists and details."""
 
