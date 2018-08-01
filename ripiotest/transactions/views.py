@@ -2,13 +2,15 @@
 from transactions.models import Transaction
 from transactions.serializers import TransactionSerializer
 from rest_framework import viewsets
+from coins.permissions import CreateOrReadOnly
 from django.db import transaction
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import permission_classes
 
 
-# TODO: add permission
+@permission_classes((CreateOrReadOnly,))
 class CustomTransactionViewSet(viewsets.ViewSet):
     """
     List all transactions, or create a new transaction.

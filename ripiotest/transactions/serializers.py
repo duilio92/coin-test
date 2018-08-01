@@ -23,6 +23,7 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     coin_type = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='api:coin-detail',
+        lookup_field='name',
         queryset=Coin.objects.all())
 
     date = serializers.DateTimeField(read_only=True)
@@ -49,6 +50,13 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError('La transaccion debe tener un monto mayor a 0.')
         if origin.balance - ammount <0:
             raise ValidationError('El origen no tiene fondos suficientes para la transaccion.')
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        owner = origin.main_account.user
+        if owner != user:
+            raise ValidationError('La transaccion solo puede ser creada por el usuario de la cuenta origen')
         return data
 
     class Meta:
