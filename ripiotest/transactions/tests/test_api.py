@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import json
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
-from coins.models import Coin, Account, CoinAccount
+from coins.models import Coin, CoinAccount
 from django.contrib.auth.models import User
 
 
@@ -47,11 +46,6 @@ class TransactionTest(APITestCase):
         self.url_account2 = reverse(
             'api:coinaccount-detail',
             kwargs={'pk': self.ca_user2.pk})
-
-        # self.url_list_create = reverse('api:transaction-list')
-        # self.url_detail = reverse(
-        #     'api:transaction-detail',
-        #     kwargs={'pk': '1'})
 
     def test_create(self):
         self.ca_user1.balance = 1
