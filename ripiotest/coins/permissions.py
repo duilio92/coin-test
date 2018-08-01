@@ -38,12 +38,12 @@ class IsAdminOrUserReadOnlyPermission(BasePermission):
             return request.user.is_staff
 
 
-class IsOriginCreateOrReadOnly(BasePermission):
+class CreateOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
         else:
             if request.method == 'CREATE':
-                return request.user == obj.origin.main_account.user
+                return False
             return True
