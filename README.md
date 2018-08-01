@@ -12,3 +12,7 @@ Para correr los tests:
 ```
 python manage.py test coins.tests 
 ```
+Y para correr los tests de las transacciones:
+```
+python manage.py test transactions.tests 
+```
