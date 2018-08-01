@@ -56,6 +56,34 @@ class AccountViewSet(viewsets.ModelViewSet):
 @permission_classes((IsOriginCreateOrReadOnly,))
 class CoinAccountViewSet(viewsets.ModelViewSet):
     """SubAccouns lists and details."""
-
     queryset = CoinAccount.objects.all()
     serializer_class = CoinAccountSerializer
+
+#
+# class CoinAccountViewSet(viewsets.ViewSet):
+#     """
+#     List all coinAccounts, or create a new coinAccount.
+#     """
+#     def list(self, request, format=None):
+#         coinAccounts = coinAccount.objects.all()
+#         serializer = coinAccountSerializer(coinAccounts, many=True, context={'request': request})
+#         return Response(serializer.data)
+
+#     def create(self, request, format=None):
+#         serializer = coinAccountSerializer(data=request.data, context={'request': request})
+#         if 
+#         if serializer.is_valid():
+#             self.save_coinAccount(serializer)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def retrieve(self, request, pk, format=None):
+#         coinAccount = self.get_object(pk)
+#         serializer = coinAccountSerializer(coinAccount, context={'request': request})
+#         return Response(serializer.data)
+
+#     def get_object(self, pk):
+#         try:
+#             return coinAccount.objects.get(pk=pk)
+#         except coinAccount.DoesNotExist:
+#             raise Http404

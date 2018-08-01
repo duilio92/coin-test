@@ -4,7 +4,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.validators import UniqueValidator
 from coins.models import Coin, Account, CoinAccount
 from django.contrib.auth.models import User
-
+from rest_framework.exceptions import ValidationError
 
 class CoinSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -78,6 +78,22 @@ class CoinAccountSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_name(self, obj):
         return obj.main_account.user.username + " " + obj.coin_type.name
+
+    def validate(self, data):
+        if not data['main_account']:
+            raise ValidationError('La subcuenta debe tener una cuenta principal.')
+        if not data['coin_type']:
+            raise ValidationError('La subcuenta debe tener un tipo de moneda.')
+        if data.get('balance', None):
+            raise ValidationError('La subcuenta no debe recibir un balance')
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        owner = data['main_account'].user
+        if owner != user:
+            raise ValidationError('La cuenta solo puede ser creada por el usuario dueño de la cuenta principal.')
+        return data
 
     class Meta:
         model = CoinAccount

@@ -14,11 +14,12 @@ class CoinAPITests(APITestCase):
             password="t3st1ng!!",
             is_staff=True)
         self.client = APIClient()
-
         Coin.objects.get_or_create(name="duicoin")
         Coin.objects.get_or_create(name="bitcoin")
         self.url_list_create = reverse('api:coin-list')
-        self.url_detail = reverse('api:coin-detail', kwargs={'name': 'duicoin'})
+        self.url_detail = reverse(
+            'api:coin-detail',
+            kwargs={'name': 'duicoin'})
 
     def test_list(self):
         self.client.force_authenticate(self.user)
@@ -32,7 +33,7 @@ class CoinAPITests(APITestCase):
         response = self.client.get(self.url_detail)
         data = json.loads(response.content)
         content = {'url': self.url_detail, 'id': 1, 'name': 'duicoin'}
-        # url gives error when comparing content, so will compare all others field
+        # url gives error, so forn now all field except url.
         self.assertEquals(data['id'], content['id'])
         self.assertEquals(data['name'], content['name'])
 
@@ -43,10 +44,19 @@ class CoinAPITests(APITestCase):
         data = json.loads(response.content)
         self.assertEquals(response.status_code, 201)
         content = {'url': self.url_detail, 'id': 3, 'name': 'testcoin'}
-        # url gives error when comparing content, so will compare all others field
+        # url gives error, so forn now all field except url.
         self.assertEquals(data['id'], content['id'])
         self.assertEquals(data['name'], content['name'])
         self.assertEquals(Coin.objects.count(), 3)
+
+    def test_create_repeated_name(self):
+        """The name of a coin must be unique."""
+        self.client.force_authenticate(self.user)
+        post = {'name': 'testcoin'}
+        response = self.client.post(self.url_list_create, post)
+        response = self.client.post(self.url_list_create, post)
+        json.loads(response.content)
+        self.assertEquals(response.status_code, 400)
 
     def test_delete(self):
         self.client.force_authenticate(self.user)
@@ -61,24 +71,23 @@ class CoinApiTestsPermissions(APITestCase):
             username="testing",
             password="t3st1ng!!"
         )
-        #by deffault the user isnt staff
-
         self.client = APIClient()
-
         Coin.objects.get_or_create(name="duicoin")
         Coin.objects.get_or_create(name="bitcoin")
         self.url_list_create = reverse('api:coin-list')
-        self.url_detail = reverse('api:coin-detail', kwargs={'name': 'duicoin'})
+        self.url_detail = reverse(
+            'api:coin-detail',
+            kwargs={'name': 'duicoin'})
 
     def test_create(self):
-        # if user is not staffed he must not be allwoed to create.
+        """If user is not staffed he must not be allowed to create."""
         self.client.force_authenticate(self.user)
         post = {'name': 'testcoin'}
         response = self.client.post(self.url_list_create, post)
         self.assertEquals(response.status_code, 403)
 
     def test_create_unauthenticated(self):
-        # anonymus user must not be allowed to create.
+        """If the user is not logged in he must not be allowed to create."""
         self.client.force_authenticate(self.user)
         post = {'name': 'testcoin'}
         response = self.client.post(self.url_list_create, post)
@@ -100,10 +109,13 @@ class AccountAPITests(APITestCase):
         # create test users to create accounts
         User.objects.create(username="user1", password="t3stfirst")
         User.objects.create(username="user2", password="t3stsecond")
-        account,created = Account.objects.get_or_create(user__username="user1")
+        account, created = Account.objects.get_or_create(
+            user__username="user1")
         Account.objects.get_or_create(user__username="user2")
         self.url_list_create = reverse('api:account-list')
-        self.url_detail = reverse('api:account-detail', kwargs={'pk': account.id})
+        self.url_detail = reverse(
+            'api:account-detail',
+            kwargs={'pk': account.id})
 
     def test_list(self):
         self.client.force_authenticate(self.user)
@@ -111,13 +123,6 @@ class AccountAPITests(APITestCase):
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "user1 account")
         self.assertContains(response, "user2 account")
-
-    # def test_detail(self):
-    # def test_update_ammount(self):
-    #     #TODO
-    #     #el monto no deberia poder ser negativo incluso si lo intento
-    # def test_create(self):
-    # def test_delete(self):
 
 
 class CoinAccountAPITests(APITestCase):
@@ -128,8 +133,12 @@ class CoinAccountAPITests(APITestCase):
             is_staff=True)
         self.client = APIClient()
         # create test users to create accounts
-        self.testUser1 = User.objects.create(username="user1", password="t3stfirst")
-        self.testUser2 =User.objects.create(username="user2", password="t3stsecond")
+        self.testUser1 = User.objects.create(
+            username="user1",
+            password="t3stfirst")
+        self.testUser2 = User.objects.create(
+            username="user2",
+            password="t3stsecond")
         self.url_list_create = reverse('api:coinaccount-list')
 
         self.coin, created = Coin.objects.get_or_create(name="bitcoin")
@@ -141,11 +150,16 @@ class CoinAccountAPITests(APITestCase):
         CoinAccount.objects.create(
             coin_type=coin2,
             main_account=self.testUser2.account)
-        
-        self.url_coin = reverse('api:coin-detail', kwargs={'name': self.coin.name})
-        self.url_user_main_account = reverse('api:account-detail', kwargs={'pk': self.user.id})
-        
-        #self.url_detail = reverse('api:coinaccount-detail', kwargs={'pk': account.id})
+
+        self.url_coin = reverse(
+            'api:coin-detail',
+            kwargs={'name': self.coin.name})
+        self.url_user_main_account = reverse(
+            'api:account-detail',
+            kwargs={'pk': self.user.id})
+        self.url_user2_main_account = reverse(
+            'api:account-detail',
+            kwargs={'pk': self.testUser2.id})
 
     def test_list(self):
         self.client.force_authenticate(self.user)
@@ -156,17 +170,28 @@ class CoinAccountAPITests(APITestCase):
 
     def test_create(self):
         self.client.force_authenticate(self.user)
-        post = {"coin_type": self.url_coin, "main_account": self.url_user_main_account}
+        post = {
+            "coin_type": self.url_coin,
+            "main_account": self.url_user_main_account}
         response = self.client.post(self.url_list_create, post)
-        data = json.loads(response.content)
         self.assertEquals(response.status_code, 201)
         self.assertEquals(CoinAccount.objects.count(), 3)
-        
+
     def test_create_other_user(self):
-        # if an user tries to open an account for other user, it must be dennied
+        """Creating an account for other user must be denied."""
         self.client.force_authenticate(self.testUser2)
-        post = {"coin_type": self.url_coin, "main_account": self.url_user_main_account}
+        post = {
+            "coin_type": self.url_coin,
+            "main_account": self.url_user_main_account}
         response = self.client.post(self.url_list_create, post)
-        data = json.loads(response.content)
         self.assertNotEquals(response.status_code, 201)
-        self.assertEquals(CoinAccount.objects.count(), 3)
+
+    def test_create_with_balance(self):
+        """Creating with a balance must be denied."""
+        self.client.force_authenticate(self.testUser2)
+        post = {
+            "coin_type": self.url_coin,
+            "main_account": self.url_user2_main_account,
+            "balance": 9999}
+        response = self.client.post(self.url_list_create, post)
+        self.assertEquals(response.status_code, 201)
